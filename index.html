@@ -1,310 +1,1408 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRAIPPY — Travel organized, together.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --primary:#FF6B35;--primary-dark:#E85A28;
-  --secondary:#FFB547;--secondary-light:#FFDC80;
-  --sunset-from:#FF4500;--sunset-to:#FF8C42;
-  --tropical-from:#0A6E52;--tropical-to:#1DB48A;
-  --horizon-from:#1A3FAD;--horizon-to:#3B8BDE;
-  --midnight-from:#0D0C24;--midnight-to:#1E1D3F;
-  --amber-from:#D97706;--amber-to:#F5B942;
-  --reef-from:#0D5D6E;--reef-to:#1A9BAE;
-  --dusk-from:#5B2D9E;--dusk-to:#8B5CF6;
-  --bg:#FFF8F0;--surface:#FFFFFF;--surface-alt:#FFF3E8;--surface-warm:#FFF0DC;
-  --dark:#0D0C24;
-  --text:#1E1E2D;--text-secondary:#5A5A72;--text-muted:#9292A5;
-  --grad-sunset:linear-gradient(135deg,var(--sunset-from),var(--sunset-to));
-  --grad-golden:linear-gradient(135deg,#FF6B35,#FFB547);
-  --grad-tropical:linear-gradient(135deg,var(--tropical-from),var(--tropical-to));
-  --grad-horizon:linear-gradient(135deg,var(--horizon-from),var(--horizon-to));
-  --grad-midnight:linear-gradient(135deg,var(--midnight-from),var(--midnight-to));
-  --grad-amber:linear-gradient(135deg,var(--amber-from),var(--amber-to));
-  --grad-reef:linear-gradient(135deg,var(--reef-from),var(--reef-to));
-  --grad-dusk:linear-gradient(135deg,var(--dusk-from),var(--dusk-to));
+<!doctype html>
+<html lang="en"><head><script data-od-sandbox-shim="">(function(){
+  function makeStore(){
+    var data = {};
+    var api = {
+      getItem: function(k){ return Object.prototype.hasOwnProperty.call(data, k) ? data[k] : null; },
+      setItem: function(k, v){ data[k] = String(v); },
+      removeItem: function(k){ delete data[k]; },
+      clear: function(){ data = {}; },
+      key: function(i){ return Object.keys(data)[i] || null; }
+    };
+    Object.defineProperty(api, 'length', { get: function(){ return Object.keys(data).length; } });
+    return api;
+  }
+  function tryShim(name){
+    var works = false;
+    try { works = !!window[name] && typeof window[name].getItem === 'function'; void window[name].length; }
+    catch (_) { works = false; }
+    if (works) return;
+    try { Object.defineProperty(window, name, { configurable: true, value: makeStore() }); }
+    catch (_) { try { window[name] = makeStore(); } catch (__) {} }
+  }
+  tryShim('localStorage');
+  tryShim('sessionStorage');
+  document.addEventListener('click', (e) => {
+    if (!e.target || !(e.target instanceof Element)) return;
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (href === null) return;
+    var isAnchor = href.startsWith('#') || href === '';
+    if (isAnchor) {
+      e.preventDefault();
+      if (href === '' || href === '#') {
+        window.scrollTo({ top: 0 });
+        history.replaceState(null, '', ' ');
+      } else {
+        var targetId = href.slice(1);
+        var target = targetId ? document.getElementById(targetId) : null;
+        if (target) {
+          target.scrollIntoView();
+          location.hash === href && history.replaceState(null, '', ' ');
+          location.hash = href;
+        }
+      }
+    } else if (link.getAttribute('target') === '_blank') {
+      e.preventDefault();
+      let safe = false;
+      try {
+        var url = new URL(href, location.href);
+        safe =
+          url.protocol === 'http:' ||
+          url.protocol === 'https:' ||
+          url.protocol === 'mailto:';
+      } catch (_) {}
+      safe && window.open(href, '_blank', 'noopener,noreferrer');
+    }
+  });
+})();</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Traippy — Travel organized, together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fff8d7;
+      --surface: #ffffff;
+      --surface-warm: #ffef9f;
+      --fg: #1d1836;
+      --fg-2: #4c426c;
+      --muted: #796f91;
+      --meta: #ff6b00;
+      --border: #eadfba;
+      --border-soft: #f5eccd;
+      --accent: #ff6b00;
+      --accent-on: #ffffff;
+      --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+      --accent-active: color-mix(in oklab, var(--accent), black 14%);
+      --success: #2e9d57;
+      --warn: #ffb020;
+      --danger: #e5484d;
+      --pastel-rose: #f2d9dc;
+      --pastel-mint: #d9f2d8;
+      --sun-coral: #ff7a45;
+      --sun-gold: #ffc14d;
+      --sun-rose: #ff5c8a;
+      --sun-magenta: #e85dff;
+      --font-display: 'Noto Serif Display', Georgia, serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-base: 16px;
+      --text-lg: 18px;
+      --text-xl: 24px;
+      --text-2xl: 36px;
+      --text-3xl: 54px;
+      --text-4xl: 76px;
+      --leading-body: 1.52;
+      --leading-tight: 1.06;
+      --tracking-display: -0.025em;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --section-y-desktop: 96px;
+      --section-y-tablet: 68px;
+      --section-y-phone: 48px;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+      --elev-flat: none;
+      --elev-ring: 0 0 0 1px var(--border);
+      --elev-raised: 0 18px 44px rgba(29, 24, 54, 0.14);
+      --focus-ring: 0 0 0 4px rgba(255, 107, 0, 0.26);
+      --motion-fast: 150ms;
+      --motion-base: 240ms;
+      --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+      --container-max: 1180px;
+      --container-gutter-desktop: 36px;
+      --container-gutter-tablet: 24px;
+      --container-gutter-phone: 16px;
+      --radius: var(--radius-md);
+      --shadow: var(--elev-raised);
+      --nav-h: 72px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: var(--leading-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    /* Nav */
+    .nav {
+      position: fixed;
+      inset: 0 0 auto;
+      height: var(--nav-h);
+      z-index: 100;
+      background: color-mix(in oklab, var(--surface), transparent 12%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .nav-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--fg); }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-on);
+      box-shadow: 0 8px 28px rgba(255, 107, 0, 0.38);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 10px 32px rgba(255, 107, 0, 0.45);
+    }
+    .btn-primary:focus-visible { outline: none; box-shadow: var(--focus-ring), 0 8px 28px rgba(255, 107, 0, 0.38); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); }
+    .menu-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .menu-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--fg);
+      border-radius: 1px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Hero — sunset sky */
+    .hero {
+      padding-top: calc(var(--nav-h) + 64px);
+      padding-bottom: var(--section-y-desktop);
+      background:
+        radial-gradient(ellipse 90% 70% at 85% 8%, rgba(255, 92, 138, 0.35) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 55% at 15% 20%, rgba(255, 193, 77, 0.45) 0%, transparent 50%),
+        linear-gradient(175deg, #ffe8a8 0%, #ffd4a8 28%, #ffb8a0 52%, #ff9a7a 72%, var(--bg) 100%);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 120px;
+      background: linear-gradient(to top, var(--bg), transparent);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-sun {
+      position: absolute;
+      top: clamp(72px, 12vw, 120px);
+      right: clamp(8%, 14vw, 18%);
+      width: clamp(88px, 14vw, 140px);
+      height: clamp(88px, 14vw, 140px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff4c4 0%, var(--sun-gold) 35%, var(--sun-coral) 75%, var(--sun-rose) 100%);
+      box-shadow:
+        0 0 60px rgba(255, 193, 77, 0.7),
+        0 0 120px rgba(255, 107, 0, 0.35);
+      animation: sun-glow 4s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes sun-glow {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.04); filter: brightness(1.08); }
+    }
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(1px);
+    }
+    .hero-orb--1 {
+      width: 220px;
+      height: 220px;
+      left: -4%;
+      top: 42%;
+      background: rgba(232, 93, 255, 0.22);
+      animation: drift 9s ease-in-out infinite;
+    }
+    .hero-orb--2 {
+      width: 160px;
+      height: 160px;
+      right: 32%;
+      bottom: 18%;
+      background: rgba(217, 242, 216, 0.55);
+      animation: drift 7s ease-in-out infinite reverse;
+    }
+    .hero-orb--3 {
+      width: 100px;
+      height: 100px;
+      left: 38%;
+      top: 18%;
+      background: rgba(242, 217, 220, 0.6);
+      animation: drift 6s ease-in-out infinite 1s;
+    }
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(12px, -16px); }
+    }
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: color-mix(in oklab, var(--surface), transparent 20%);
+      color: var(--accent);
+      border: 1px solid color-mix(in oklab, var(--accent), white 60%);
+      border-radius: var(--radius-pill);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: var(--space-6);
+      box-shadow: 0 4px 16px rgba(255, 107, 0, 0.12);
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5.5vw, var(--text-3xl));
+      font-weight: 800;
+      line-height: var(--leading-tight);
+      letter-spacing: var(--tracking-display);
+      margin-bottom: var(--space-5);
+    }
+    .hero h1 em {
+      font-style: italic;
+      background: linear-gradient(120deg, var(--accent) 0%, var(--sun-rose) 55%, var(--sun-magenta) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-lead {
+      font-size: 1.125rem;
+      color: var(--muted);
+      max-width: 46ch;
+      margin-bottom: 32px;
+    }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
+    .hero-trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    .hero-trust strong { color: var(--fg); font-weight: 600; }
+
+    /* Trip wallet mockup */
+    .wallet {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-soft);
+      overflow: hidden;
+      transform: rotate(1.5deg);
+      animation: wallet-float 5s ease-in-out infinite;
+    }
+    @keyframes wallet-float {
+      0%, 100% { transform: rotate(1.5deg) translateY(0); }
+      50% { transform: rotate(1.5deg) translateY(-10px); }
+    }
+    .wallet-header {
+      padding: 20px 24px 16px;
+      background: linear-gradient(125deg, var(--sun-coral) 0%, var(--accent) 45%, var(--sun-rose) 100%);
+      color: var(--accent-on);
+    }
+    .wallet-trip {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .wallet-meta {
+      font-size: 0.875rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+    .wallet-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .wallet-tab {
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--muted);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.15s, background 0.15s;
+    }
+    .wallet-tab.active {
+      color: var(--accent);
+      background: rgba(255, 107, 0, 0.1);
+    }
+    .wallet-body { padding: 20px 24px 24px; }
+    .wallet-panel { display: none; }
+    .wallet-panel.active { display: block; }
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      padding: 16px;
+      background: var(--surface-warm);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-soft);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .itinerary-item {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .itinerary-item:last-child { border-bottom: none; }
+    .itinerary-time {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 52px;
+    }
+    .itinerary-title { font-weight: 600; font-size: 0.9375rem; }
+    .itinerary-sub { font-size: 0.8125rem; color: var(--muted); }
+    .booking-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .booking-type { font-weight: 600; font-size: 0.9375rem; }
+    .status-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .status-confirmed { background: color-mix(in oklab, var(--success), white 82%); color: var(--success); }
+    .status-pending { background: color-mix(in oklab, var(--warn), white 75%); color: color-mix(in oklab, var(--warn), black 25%); }
+
+    /* Problem section */
+    .problem {
+      padding: var(--section-y-desktop) 0;
+      background: linear-gradient(180deg, var(--surface) 0%, color-mix(in oklab, var(--pastel-rose), white 70%) 100%);
+      border-block: 1px solid var(--border-soft);
+    }
+    .section-label {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 20ch;
+    }
+    .section-lead {
+      color: var(--muted);
+      font-size: 1.0625rem;
+      max-width: 52ch;
+      margin-bottom: 48px;
+    }
+    .scatter-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .scatter-chip {
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--fg-2);
+      box-shadow: 0 4px 12px rgba(29, 24, 54, 0.06);
+      transition: transform var(--motion-fast) var(--ease-standard);
+    }
+    .scatter-chip:hover { transform: translateY(-2px) rotate(-1deg); }
+    .scatter-chip:nth-child(1) { background: color-mix(in oklab, var(--pastel-rose), white 40%); }
+    .scatter-chip:nth-child(2) { background: color-mix(in oklab, var(--surface-warm), white 30%); }
+    .scatter-chip:nth-child(3) { background: color-mix(in oklab, var(--pastel-mint), white 35%); }
+    .scatter-chip:nth-child(4) { background: color-mix(in oklab, var(--pastel-rose), white 55%); }
+    .scatter-chip:nth-child(5) { background: color-mix(in oklab, var(--surface-warm), white 45%); }
+    .scatter-arrow {
+      font-size: 1.5rem;
+      color: var(--accent);
+      font-weight: 300;
+    }
+    .unified-chip {
+      padding: 18px 32px;
+      background: linear-gradient(120deg, var(--accent) 0%, var(--sun-rose) 55%, var(--sun-magenta) 100%);
+      color: var(--accent-on);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      box-shadow: 0 12px 40px rgba(255, 107, 0, 0.35);
+      animation: chip-pulse 3s ease-in-out infinite;
+    }
+    @keyframes chip-pulse {
+      0%, 100% { box-shadow: 0 12px 40px rgba(255, 107, 0, 0.35); }
+      50% { box-shadow: 0 16px 48px rgba(255, 92, 138, 0.4); }
+    }
+
+    /* Features */
+    .features {
+      padding: var(--section-y-desktop) 0;
+      background: var(--bg);
+    }
+    .features-header { text-align: center; margin-bottom: 56px; }
+    .features-header .section-title { max-width: none; margin-inline: auto; }
+    .features-header .section-lead { margin-inline: auto; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature-card {
+      padding: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      transition: box-shadow var(--motion-base) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
+    }
+    .feature-card:nth-child(3n+1) { background: color-mix(in oklab, var(--pastel-rose), var(--surface) 55%); }
+    .feature-card:nth-child(3n+2) { background: color-mix(in oklab, var(--pastel-mint), var(--surface) 55%); }
+    .feature-card:nth-child(3n) { background: color-mix(in oklab, var(--surface-warm), var(--surface) 50%); }
+    .feature-card:hover {
+      box-shadow: var(--elev-raised);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in oklab, var(--accent), white 82%);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .feature-card p { font-size: 0.9375rem; color: var(--muted); }
+
+    /* Offline banner */
+    .offline {
+      padding: 64px 0;
+      background:
+        radial-gradient(ellipse 80% 120% at 0% 50%, rgba(255, 193, 77, 0.35) 0%, transparent 55%),
+        linear-gradient(105deg, var(--sun-coral) 0%, var(--accent) 40%, var(--sun-rose) 100%);
+      color: var(--accent-on);
+    }
+    .offline-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: center;
+    }
+    .offline h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .offline p { opacity: 0.85; max-width: 48ch; }
+    .offline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius-lg);
+      font-weight: 700;
+      font-size: 1.125rem;
+      white-space: nowrap;
+      backdrop-filter: blur(8px);
+    }
+
+    /* How it works */
+    .how {
+      padding: var(--section-y-desktop) 0;
+      background: linear-gradient(180deg, var(--surface) 0%, color-mix(in oklab, var(--pastel-mint), white 75%) 100%);
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .step {
+      position: relative;
+      padding: 28px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 8px 24px rgba(29, 24, 54, 0.06);
+    }
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(160deg, var(--accent), var(--sun-rose));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .step h3 {
+      font-family: var(--font-display);
+      font-size: 1.0625rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step p { font-size: 0.9375rem; color: var(--muted); }
+
+    /* Waitlist */
+    .waitlist {
+      padding: var(--section-y-desktop) 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(255, 107, 0, 0.18) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, var(--surface-warm) 100%);
+    }
+    .waitlist-card {
+      max-width: 560px;
+      margin-inline: auto;
+      text-align: center;
+      padding: 48px 40px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 2px solid color-mix(in oklab, var(--accent), white 70%);
+      box-shadow: var(--elev-raised), 0 0 0 8px rgba(255, 193, 77, 0.2);
+    }
+    .waitlist-card h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .waitlist-card > p {
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .waitlist-form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .waitlist-form input {
+      flex: 1;
+      min-width: 200px;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .waitlist-form input:focus {
+      border-color: var(--accent);
+      box-shadow: var(--focus-ring);
+    }
+    .waitlist-form input.invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--danger), white 75%);
+    }
+    .form-msg {
+      margin-top: 14px;
+      font-size: 0.875rem;
+      min-height: 1.4em;
+    }
+    .form-msg.success { color: var(--success); font-weight: 600; }
+    .form-msg.error { color: var(--danger); }
+
+    /* Footer */
+    .footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    /* Mobile nav drawer */
+    .mobile-drawer {
+      display: none;
+      position: fixed;
+      inset: var(--nav-h) 0 0;
+      background: var(--surface);
+      z-index: 99;
+      padding: 24px;
+      flex-direction: column;
+      gap: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .mobile-drawer.open { display: flex; }
+    .mobile-drawer a {
+      padding: 14px 16px;
+      color: var(--fg);
+      text-decoration: none;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+    }
+    .mobile-drawer a:hover { background: var(--bg); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .wallet { transform: none; max-width: 420px; margin-inline: auto; animation: none; }
+      .hero-sun { right: 6%; width: 72px; height: 72px; }
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .offline-inner { grid-template-columns: 1fr; text-align: center; }
+      .offline-badge { justify-content: center; }
+    }
+    @media (max-width: 640px) {
+      .container { width: calc(100% - 32px); }
+      .nav-links, .nav-actions .btn-ghost { display: none; }
+      .menu-toggle { display: flex; }
+      .hero { padding-top: calc(var(--nav-h) + 40px); padding-bottom: 64px; }
+      .hero-ctas { flex-direction: column; }
+      .hero-ctas .btn { width: 100%; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .scatter-flow { flex-direction: column; }
+      .scatter-arrow { transform: rotate(90deg); }
+      .waitlist-form { flex-direction: column; }
+      .waitlist-form .btn { width: 100%; }
+      .waitlist-card { padding: 32px 24px; }
+      .problem, .features, .how, .waitlist { padding: 64px 0; }
+    }
+  </style>
+<style data-od-tweaks-bridge-style="">
+[data-od-tweaks-hidden] .tw-panel {
+  transform: translateX(calc(100% + 32px)) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
-html{scroll-behavior:smooth}
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-.container{max-width:1100px;margin:0 auto;padding:0 24px}
-h1,h2,h3{line-height:1.2}
+.tw-restore { display: none !important; }
+</style><script data-od-tweaks-bridge="">(function(){
+  // Synchronously hide BEFORE the artifact body parses so the panel never
+  // flashes on initial paint. The host removes the attribute via postMessage
+  // once it knows the desired state.
+  document.documentElement.setAttribute('data-od-tweaks-hidden', '');
 
-/* Nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:background .3s}
-nav.scrolled{background:rgba(255,248,240,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(0,0,0,0.05)}
-nav .nav-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
-nav .logo{font-family:'Caveat',cursive;font-size:28px;font-weight:700;background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-nav .cta-btn{background:var(--grad-sunset);color:#fff;border:none;padding:10px 24px;border-radius:50px;font-weight:600;font-size:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none;display:inline-block}
-nav .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,69,0,0.3)}
+  var suppressEcho = false;
+  var observer = null;
 
-/* Hero */
-.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:120px 0 80px}
-.hero::before{content:'';position:absolute;top:-40%;right:-20%;width:800px;height:800px;background:radial-gradient(circle,rgba(255,107,53,0.15),transparent 70%);border-radius:50%;pointer-events:none}
-.hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(26,63,173,0.08),transparent 70%);border-radius:50%;pointer-events:none}
-.hero .hero-content{position:relative;z-index:1;max-width:650px}
-.hero .hero-badge{display:inline-block;background:var(--surface-warm);color:var(--primary);padding:6px 16px;border-radius:50px;font-size:13px;font-weight:600;margin-bottom:24px}
-.hero h1{font-size:clamp(3rem,8vw,5rem);font-weight:900;margin-bottom:8px;letter-spacing:-1px}
-.hero h1 .accent{font-family:'Caveat',cursive;font-size:1.15em;background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero .hero-tagline{font-size:clamp(1.1rem,2.5vw,1.35rem);color:var(--text-secondary);margin-bottom:32px;max-width:480px}
-.hero .hero-cta{display:inline-flex;gap:12px}
-.hero .hero-cta .primary-btn{background:var(--grad-sunset);color:#fff;border:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:16px;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none}
-.hero .hero-cta .primary-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,69,0,0.35)}
-.hero .hero-cta .secondary-btn{background:var(--surface);color:var(--text);border:2px solid #E8E0D8;padding:14px 32px;border-radius:50px;font-weight:600;font-size:16px;cursor:pointer;transition:all .2s;text-decoration:none}
-.hero .hero-cta .secondary-btn:hover{border-color:var(--primary);color:var(--primary)}
-.hero .hero-visual{position:absolute;right:-60px;top:50%;transform:translateY(-50%);z-index:0;opacity:0.9}
-.hero .phone-mock{width:300px;height:600px;background:var(--surface);border-radius:40px;box-shadow:0 40px 80px rgba(0,0,0,0.12);overflow:hidden;border:3px solid #1E1E2D;position:relative}
-.phone-mock .phone-notch{width:120px;height:28px;background:#1E1E2D;border-radius:0 0 20px 20px;margin:0 auto}
-.phone-mock .phone-screen{padding:20px;height:calc(100% - 28px);display:flex;flex-direction:column;gap:12px;overflow:hidden}
-.phone-mock .mock-trip-card{background:var(--grad-golden);border-radius:16px;padding:16px;color:#fff}
-.phone-mock .mock-trip-card .trip-name{font-weight:700;font-size:15px}
-.phone-mock .mock-trip-card .trip-dates{font-size:11px;opacity:0.85;margin-top:2px}
-.phone-mock .mock-section-row{display:flex;gap:8px}
-.phone-mock .mock-section{flex:1;border-radius:12px;padding:12px;color:#fff;font-size:11px;font-weight:600}
-.phone-mock .mock-section.itinerary{background:var(--grad-tropical)}
-.phone-mock .mock-section.bookings{background:var(--grad-horizon)}
-.phone-mock .mock-section.budget{background:var(--grad-midnight)}
-.phone-mock .mock-section.split{background:var(--grad-reef)}
-.phone-mock .mock-section.vault{background:var(--grad-dusk)}
-.phone-mock .mock-badge{font-size:10px;opacity:0.8;margin-top:4px}
+  function panelEl(){ return document.querySelector('.tw-panel'); }
 
-/* Problem */
-.problem{padding:100px 0;text-align:center}
-.problem h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:16px}
-.problem .problem-sub{color:var(--text-secondary);font-size:1.1rem;max-width:550px;margin:0 auto 48px}
-.problem .mess-grid{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
-.problem .mess-icon{background:var(--surface);border:1px solid #E8E0D8;border-radius:16px;padding:16px 24px;display:flex;align-items:center;gap:10px;font-weight:500;font-size:14px;color:var(--text-secondary);transition:transform .2s}
-.problem .mess-icon:hover{transform:translateY(-4px)}
-.problem .mess-icon .icon{font-size:24px}
-.problem .arrow-down{font-size:32px;margin:32px 0;color:var(--primary)}
+  function applyClassesToPanel(visible){
+    var panel = panelEl();
+    if (panel) panel.classList.toggle('tw-hidden', !visible);
+  }
 
-/* Features */
-.features{padding:80px 0}
-.features h2{text-align:center;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:12px}
-.features .features-sub{text-align:center;color:var(--text-secondary);font-size:1.1rem;margin-bottom:56px}
-.features .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
-.feature-card{background:var(--surface);border-radius:24px;padding:32px;border:1px solid #E8E0D8;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
-.feature-card:hover{transform:translateY(-6px);box-shadow:0 24px 48px rgba(0,0,0,0.08)}
-.feature-card .feat-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;color:#fff}
-.feature-card:nth-child(1) .feat-icon{background:var(--grad-tropical)}
-.feature-card:nth-child(2) .feat-icon{background:var(--grad-horizon)}
-.feature-card:nth-child(3) .feat-icon{background:var(--grad-amber)}
-.feature-card:nth-child(4) .feat-icon{background:var(--grad-reef)}
-.feature-card:nth-child(5) .feat-icon{background:var(--grad-dusk)}
-.feature-card:nth-child(6) .feat-icon{background:var(--grad-midnight)}
-.feature-card h3{font-size:1.2rem;font-weight:700;margin-bottom:8px}
-.feature-card p{color:var(--text-secondary);font-size:0.95rem;line-height:1.7}
+  function setPanelVisible(visible){
+    suppressEcho = true;
+    document.documentElement.toggleAttribute('data-od-tweaks-hidden', !visible);
+    applyClassesToPanel(visible);
+    // Clear flag after the MutationObserver has had a chance to fire for this
+    // change so we don't echo our own host-driven toggles back to the host.
+    Promise.resolve().then(function(){ suppressEcho = false; });
+  }
 
-/* Offline highlight */
-.offline{padding:100px 0;background:var(--dark);color:#fff;text-align:center;position:relative;overflow:hidden}
-.offline::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-sunset)}
-.offline h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:16px}
-.offline p{color:#9292A5;font-size:1.1rem;max-width:500px;margin:0 auto 32px}
-.offline .offline-badge{display:inline-block;background:rgba(82,82,106,0.3);border:1px solid rgba(82,82,106,0.5);color:#B8B8C8;padding:8px 20px;border-radius:50px;font-weight:600;font-size:14px}
-.offline .offline-badge .dot{display:inline-block;width:8px;height:8px;background:#52526A;border-radius:50%;margin-right:8px}
+  function postState(){
+    var panel = panelEl();
+    if (!panel) return;
+    try {
+      parent.postMessage({
+        type: 'od:tweaks-panel-state',
+        visible: !panel.classList.contains('tw-hidden'),
+      }, '*');
+    } catch (e) {}
+  }
 
-/* How it works */
-.how{padding:100px 0;text-align:center}
-.how h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:56px}
-.how .steps{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
-.how .step{flex:1;min-width:180px;max-width:240px;text-align:center}
-.how .step-num{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;margin:0 auto 16px}
-.how .step:nth-child(1) .step-num{background:var(--grad-tropical)}
-.how .step:nth-child(2) .step-num{background:var(--grad-horizon)}
-.how .step:nth-child(3) .step-num{background:var(--grad-reef)}
-.how .step:nth-child(4) .step-num{background:var(--grad-dusk)}
-.how .step h3{font-weight:700;margin-bottom:8px;font-size:1.05rem}
-.how .step p{color:var(--text-secondary);font-size:0.9rem;line-height:1.6}
+  function postAvailability(){
+    try {
+      parent.postMessage({
+        type: 'od:tweaks-available',
+        available: !!panelEl(),
+      }, '*');
+    } catch (e) {}
+  }
 
-/* CTA */
-.cta-section{padding:100px 0;text-align:center}
-.cta-section .cta-card{background:var(--surface);border-radius:32px;padding:64px 32px;max-width:650px;margin:0 auto;border:1px solid #E8E0D8;position:relative;overflow:hidden}
-.cta-section .cta-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-sunset)}
-.cta-section h2{font-size:clamp(1.6rem,3vw,2rem);font-weight:800;margin-bottom:12px}
-.cta-section p{color:var(--text-secondary);font-size:1.05rem;margin-bottom:28px}
-.cta-section .email-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.cta-section .email-form input{background:var(--bg);border:2px solid #E8E0D8;padding:14px 20px;border-radius:50px;font-size:15px;min-width:280px;outline:none;font-family:inherit;transition:border-color .2s}
-.cta-section .email-form input:focus{border-color:var(--primary)}
-.cta-section .email-form button{background:var(--grad-sunset);color:#fff;border:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;cursor:pointer;transition:transform .2s,box-shadow .2s}
-.cta-section .email-form button:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,69,0,0.3)}
+  function attachObserver(){
+    var panel = panelEl();
+    if (!panel || observer) return;
+    observer = new MutationObserver(function(){
+      if (suppressEcho) return;
+      postState();
+    });
+    observer.observe(panel, { attributes: true, attributeFilter: ['class'] });
+  }
 
-/* Footer */
-footer{padding:40px 0;text-align:center;border-top:1px solid #E8E0D8}
-footer .footer-logo{font-family:'Caveat',cursive;font-size:24px;font-weight:700;background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
-footer p{color:var(--text-muted);font-size:13px}
+  function onReady(){
+    // Capture the panel authored visibility BEFORE we apply the host hidden
+    // attribute. The bridge sets data-od-tweaks-hidden synchronously in head
+    // (before the body parses), so on entry to onReady the attribute is
+    // always present even though the artifact may have authored the panel
+    // as default-visible. Reading the panel class first is the only place
+    // we can still observe the author intent. Then drive the attribute,
+    // classes, and posted state from that captured value so a default
+    // visible tw-panel reports visible:true and the toolbar toggle starts
+    // ON. Issue surfaced in PR #1643 review.
+    var panel = panelEl();
+    var initialVisible = !!panel && !panel.classList.contains('tw-hidden');
+    document.documentElement.toggleAttribute('data-od-tweaks-hidden', !initialVisible);
+    applyClassesToPanel(initialVisible);
+    attachObserver();
+    postAvailability();
+    // Post the captured initial visibility so the toolbar toggle reflects
+    // the default state on mount. Without this the toggle reads OFF while
+    // a default-visible tw-panel artifact clearly shows its panel and the
+    // user would have to click toggle-on then toggle-off to actually hide.
+    postState();
+  }
 
-@media(max-width:768px){
-  .hero{flex-direction:column;text-align:center;padding:100px 0 60px}
-  .hero .hero-content{max-width:100%}
-  .hero .hero-tagline{margin-left:auto;margin-right:auto}
-  .hero .hero-visual{display:none}
-  .hero .hero-cta{flex-direction:column;align-items:center}
-  .feature-grid{grid-template-columns:1fr}
-  .how .steps{flex-direction:column;align-items:center}
-}
-</style>
-</head>
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
+  }
+
+  window.addEventListener('message', function(ev){
+    if (!ev.data || ev.data.type !== 'od:tweaks-panel-visible') return;
+    setPanelVisible(!!ev.data.visible);
+  });
+})();</script></head>
 <body>
-
-<nav id="nav">
-  <div class="nav-inner">
-    <div class="logo">Traippy</div>
-    <a href="#cta" class="cta-btn">Get Early Access</a>
-  </div>
-</nav>
-
-<section class="hero">
-  <div class="hero-content container">
-    <span class="hero-badge">✨ Coming Soon</span>
-    <h1>Your trips,<br><span class="accent">organized</span> together.</h1>
-    <p class="hero-tagline">TRAIPPY replaces the scattered mess of WhatsApp threads, Google Docs, Splitwise, and screenshots with a single beautiful travel wallet — online or off.</p>
-    <div class="hero-cta">
-      <a href="#cta" class="primary-btn">Join the Waitlist</a>
-      <a href="#features" class="secondary-btn">See What It Does</a>
+  <header class="nav" data-od-id="path-0">
+    <div class="container nav-inner" data-od-id="path-0-0">
+      <a href="#" class="logo" data-od-id="path-0-0-0">trai<span>ppy</span></a>
+      <ul class="nav-links">
+        <li><a href="#features" data-od-id="path-0-0-1-0-0">Features</a></li>
+        <li><a href="#how" data-od-id="path-0-0-1-1-0">How it works</a></li>
+        <li><a href="#waitlist" data-od-id="path-0-0-1-2-0">Early access</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#waitlist" class="btn btn-ghost" data-od-id="path-0-0-2-0">See demo</a>
+        <a href="#waitlist" class="btn btn-primary" data-od-id="path-0-0-2-1">Join waitlist</a>
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" id="menu-toggle" data-od-id="path-0-0-2-2">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="hero-visual">
-    <div class="phone-mock">
-      <div class="phone-notch"></div>
-      <div class="phone-screen">
-        <div class="mock-trip-card">
-          <div class="trip-name">Goa 2025 🏖️</div>
-          <div class="trip-dates">Dec 20 – 27 · 5 members</div>
+  </header>
+
+  <nav class="mobile-drawer" id="mobile-drawer" aria-hidden="true" data-od-id="path-1">
+    <a href="#features" data-od-id="path-1-0">Features</a>
+    <a href="#how" data-od-id="path-1-1">How it works</a>
+    <a href="#waitlist" data-od-id="path-1-2">Early access</a>
+    <a href="#waitlist" class="btn btn-primary" style="margin-top: 8px;" data-od-id="path-1-3">Join waitlist</a>
+  </nav>
+
+  <section class="hero" data-od-id="path-2">
+    <div class="hero-sun" aria-hidden="true" data-od-id="path-2-0"></div>
+    <div class="hero-orb hero-orb--1" aria-hidden="true" data-od-id="path-2-1"></div>
+    <div class="hero-orb hero-orb--2" aria-hidden="true" data-od-id="path-2-2"></div>
+    <div class="hero-orb hero-orb--3" aria-hidden="true" data-od-id="path-2-3"></div>
+    <div class="container hero-grid" data-od-id="path-2-4">
+      <div class="hero-content">
+        <div class="badge"><span class="badge-dot"></span> Your happy travel hub</div>
+        <h1 data-od-id="path-2-4-0-1">Your trips,<br><em>organized together.</em></h1>
+        <p class="hero-lead">One sunny place for plans, bookings, and splits — so group trips feel like vacation from day one, not another group chat.</p>
+        <div class="hero-ctas">
+          <a href="#waitlist" class="btn btn-primary" data-od-id="path-2-4-0-3-0">Join the waitlist</a>
+          <a href="#features" class="btn btn-ghost" data-od-id="path-2-4-0-3-1">See what it does</a>
         </div>
-        <div class="mock-section-row">
-          <div class="mock-section itinerary">📍 Plan<div class="mock-badge">Day 3/7</div></div>
-          <div class="mock-section bookings">✈️ Bookings<div class="mock-badge">2 confirmed</div></div>
+        <div class="hero-trust">
+          <span><strong>Offline-first</strong> by design</span>
+          <span><strong>Group-ready</strong> splits &amp; plans</span>
+          <span><strong>Private vault</strong> for docs</span>
         </div>
-        <div class="mock-section-row">
-          <div class="mock-section budget">💰 Budget<div class="mock-badge">₹42K / ₹60K</div></div>
-          <div class="mock-section split">📊 Split<div class="mock-badge">3 settled</div></div>
+      </div>
+      <div class="wallet" aria-label="Trip wallet preview">
+        <div class="wallet-header">
+          <div class="wallet-trip">Goa 2025</div>
+          <div class="wallet-meta">Dec 20 – 27 · 5 members</div>
         </div>
-        <div class="mock-section vault">🔒 My Vault</div>
+        <div class="wallet-tabs" role="tablist">
+          <button class="wallet-tab active" role="tab" aria-selected="true" data-tab="plan" data-od-id="path-2-4-1-1-0">Plan</button>
+          <button class="wallet-tab" role="tab" aria-selected="false" data-tab="bookings" data-od-id="path-2-4-1-1-1">Bookings</button>
+          <button class="wallet-tab" role="tab" aria-selected="false" data-tab="budget" data-od-id="path-2-4-1-1-2">Budget</button>
+          <button class="wallet-tab" role="tab" aria-selected="false" data-tab="split" data-od-id="path-2-4-1-1-3">Split</button>
+        </div>
+        <div class="wallet-body">
+          <div class="wallet-panel active" data-panel="plan">
+            <div class="stat-row">
+              <div class="stat-card">
+                <div class="stat-label">Today</div>
+                <div class="stat-value">Day 3/7</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Next up</div>
+                <div class="stat-value" style="font-size:1rem;">Beach sunset</div>
+              </div>
+            </div>
+            <div class="itinerary-item">
+              <span class="itinerary-time">10:00</span>
+              <div>
+                <div class="itinerary-title">Old Goa churches</div>
+                <div class="itinerary-sub">Heritage walk · 2 hrs</div>
+              </div>
+            </div>
+            <div class="itinerary-item">
+              <span class="itinerary-time">14:30</span>
+              <div>
+                <div class="itinerary-title">Seafood lunch</div>
+                <div class="itinerary-sub">Martin's Corner</div>
+              </div>
+            </div>
+            <div class="itinerary-item">
+              <span class="itinerary-time">18:00</span>
+              <div>
+                <div class="itinerary-title">Palolem beach</div>
+                <div class="itinerary-sub">Sunset · group meetup</div>
+              </div>
+            </div>
+          </div>
+          <div class="wallet-panel" data-panel="bookings">
+            <div class="booking-row">
+              <span class="booking-type">Flight · DEL → GOI</span>
+              <span class="status-pill status-confirmed">Confirmed</span>
+            </div>
+            <div class="booking-row">
+              <span class="booking-type">Hotel · Palolem</span>
+              <span class="status-pill status-confirmed">Confirmed</span>
+            </div>
+            <div class="booking-row">
+              <span class="booking-type">Scooter rental</span>
+              <span class="status-pill status-pending">Pending</span>
+            </div>
+          </div>
+          <div class="wallet-panel" data-panel="budget">
+            <div class="stat-card" style="margin-bottom:12px;">
+              <div class="stat-label">Group budget</div>
+              <div class="stat-value">₹42K / ₹60K</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:70%;"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-card">
+                <div class="stat-label">Food</div>
+                <div class="stat-value">₹12K</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Stay</div>
+                <div class="stat-value">₹18K</div>
+              </div>
+            </div>
+          </div>
+          <div class="wallet-panel" data-panel="split">
+            <div class="stat-row">
+              <div class="stat-card">
+                <div class="stat-label">Settled</div>
+                <div class="stat-value">3 of 5</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">You owe</div>
+                <div class="stat-value">₹1,200</div>
+              </div>
+            </div>
+            <div class="booking-row">
+              <span class="booking-type">Dinner split · Dec 22</span>
+              <span class="status-pill status-pending">Open</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="problem">
-  <div class="container">
-    <h2>Planning trips shouldn't feel like work.</h2>
-    <p class="problem-sub">But right now, your travel plans are scattered across a dozen apps and chat threads.</p>
-    <div class="mess-grid">
-      <div class="mess-icon"><span class="icon">💬</span> WhatsApp threads</div>
-      <div class="mess-icon"><span class="icon">📄</span> Google Docs</div>
-      <div class="mess-icon"><span class="icon">💰</span> Splitwise</div>
-      <div class="mess-icon"><span class="icon">📸</span> Screenshots</div>
-      <div class="mess-icon"><span class="icon">📝</span> Notes app</div>
-    </div>
-    <div class="arrow-down">↓</div>
-    <h2 style="background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">TRAIPPY brings it all together.</h2>
-  </div>
-</section>
-
-<section class="features" id="features">
-  <div class="container">
-    <h2>Everything in one place.</h2>
-    <p class="features-sub">Every trip gets its own space. Every item has its place.</p>
-    <div class="feature-grid">
-      <div class="feature-card">
-        <div class="feat-icon">📍</div>
-        <h3>Day-by-Day Itinerary</h3>
-        <p>Build your plan with places, activities, and times. See your trip unfold day by day — clear, visual, and easy to adjust on the go.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feat-icon">✈️</div>
-        <h3>Bookings at a Glance</h3>
-        <p>Flights, hotels, car rentals, experiences — all in one place with confirmation status. No more digging through email for booking references.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feat-icon">💰</div>
-        <h3>Budget & Split</h3>
-        <p>Track spending against your budget. Split expenses with your group — equal, custom, or by percentage. Always know who owes what.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feat-icon">📊</div>
-        <h3>Smart Splitting</h3>
-        <p>Expense ledger with settlement tracking. See at a glance who's settled up and who hasn't — no more awkward conversations.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feat-icon">🔒</div>
-        <h3>Private Vault</h3>
-        <p>Store passport details, visa references, insurance info, and emergency contacts securely. Share with the group or keep private — the choice is yours.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feat-icon">👥</div>
-        <h3>Built for Groups</h3>
-        <p>Invite friends to your trip. Everyone sees the plan, adds their bookings, splits expenses, and stays in sync — no group chat chaos.</p>
+  <section class="problem" data-od-id="path-3">
+    <div class="container" data-od-id="path-3-0">
+      <p class="section-label">The problem</p>
+      <h2 class="section-title" data-od-id="path-3-0-1">Planning trips shouldn't feel like work.</h2>
+      <p class="section-lead">Right now your travel plans live across a dozen apps and chat threads. Traippy brings it all together.</p>
+      <div class="scatter-flow">
+        <span class="scatter-chip">WhatsApp threads</span>
+        <span class="scatter-chip">Google Docs</span>
+        <span class="scatter-chip">Splitwise</span>
+        <span class="scatter-chip">Screenshots</span>
+        <span class="scatter-chip">Notes app</span>
+        <span class="scatter-arrow" aria-hidden="true">→</span>
+        <span class="unified-chip">One Traippy wallet</span>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="offline">
-  <div class="container">
-    <h2>Works without internet.</h2>
-    <p>Access your itinerary, bookings, checklists, and budget even when you're off the grid. TRAIPPY is offline-first by design — not a premium feature.</p>
-    <span class="offline-badge"><span class="dot"></span> Offline-ready</span>
-  </div>
-</section>
-
-<section class="how">
-  <div class="container">
-    <h2>How it works</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Create a Trip</h3>
-        <p>Name it, pick dates, add a cover photo. Invite your friends.</p>
+  <section class="features" id="features" data-od-id="path-4">
+    <div class="container" data-od-id="path-4-0">
+      <div class="features-header">
+        <p class="section-label">Features</p>
+        <h2 class="section-title" data-od-id="path-4-0-0-1">Everything in one place</h2>
+        <p class="section-lead">Every trip gets its own space. Every item has its place.</p>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Add Your Plans</h3>
-        <p>Drop in bookings, build your itinerary, set a budget.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Travel Together</h3>
-        <p>Everyone sees the plan. Split expenses as you go.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Stay Private</h3>
-        <p>Sensitive items stay in your vault. Share only what you want.</p>
+      <div class="feature-grid">
+        <article class="feature-card" data-od-id="path-4-0-1-0">
+          <div class="feature-icon" data-od-id="path-4-0-1-0-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+          </div>
+          <h3 data-od-id="path-4-0-1-0-1">Day-by-day itinerary</h3>
+          <p>Build your plan with places, activities, and times. Clear, visual, easy to adjust on the go.</p>
+        </article>
+        <article class="feature-card" data-od-id="path-4-0-1-1">
+          <div class="feature-icon" data-od-id="path-4-0-1-1-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M2 12l4-4M2 12l4 4M22 12l-4-4M22 12l-4 4"></path><rect x="6" y="8" width="12" height="8" rx="1"></rect></svg>
+          </div>
+          <h3 data-od-id="path-4-0-1-1-1">Bookings at a glance</h3>
+          <p>Flights, hotels, rentals, experiences — confirmation status in one view. No email digging.</p>
+        </article>
+        <article class="feature-card" data-od-id="path-4-0-1-2">
+          <div class="feature-icon" data-od-id="path-4-0-1-2-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <h3 data-od-id="path-4-0-1-2-1">Budget &amp; split</h3>
+          <p>Track spending against your budget. Split equal, custom, or by percentage — always know who owes what.</p>
+        </article>
+        <article class="feature-card" data-od-id="path-4-0-1-3">
+          <div class="feature-icon" data-od-id="path-4-0-1-3-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="M7 16l4-8 4 4 6-10"></path></svg>
+          </div>
+          <h3 data-od-id="path-4-0-1-3-1">Smart splitting</h3>
+          <p>Expense ledger with settlement tracking. See who's settled up — no awkward group chat moments.</p>
+        </article>
+        <article class="feature-card" data-od-id="path-4-0-1-4">
+          <div class="feature-icon" data-od-id="path-4-0-1-4-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <h3 data-od-id="path-4-0-1-4-1">Private vault</h3>
+          <p>Passport, visa, insurance, emergency contacts — secure and shareable only when you choose.</p>
+        </article>
+        <article class="feature-card" data-od-id="path-4-0-1-5">
+          <div class="feature-icon" data-od-id="path-4-0-1-5-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <h3 data-od-id="path-4-0-1-5-1">Built for groups</h3>
+          <p>Invite friends. Everyone sees the plan, adds bookings, splits expenses, stays in sync.</p>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="cta-section" id="cta">
-  <div class="container">
-    <div class="cta-card">
-      <h2>Be the first to try TRAIPPY.</h2>
-      <p>We're building the travel organizer that friends actually use. Drop your email and we'll let you know when it's ready.</p>
-      <form class="email-form" onsubmit="event.preventDefault();alert('Thanks! We\\'ll be in touch.')">
-        <input type="email" placeholder="you@email.com" required>
-        <button type="submit">Get Early Access</button>
-      </form>
+  <section class="offline" data-od-id="path-5">
+    <div class="container offline-inner" data-od-id="path-5-0">
+      <div>
+        <h2 data-od-id="path-5-0-0-0">Works without internet</h2>
+        <p>Access your itinerary, bookings, checklists, and budget off the grid. Traippy is offline-first by design — not a premium add-on.</p>
+      </div>
+      <div class="offline-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><circle cx="12" cy="20" r="1" fill="currentColor"></circle></svg>
+        Offline-ready
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="footer-logo">Traippy</div>
-  <p>Travel organized, together. © 2026</p>
-</footer>
+  <section class="how" id="how" data-od-id="path-6">
+    <div class="container" data-od-id="path-6-0">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title" data-od-id="path-6-0-1">Four steps to travel together</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3 data-od-id="path-6-0-2-0-1">Create a trip</h3>
+          <p>Name it, pick dates, add a cover photo. Invite your friends.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3 data-od-id="path-6-0-2-1-1">Add your plans</h3>
+          <p>Drop in bookings, build your itinerary, set a budget.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3 data-od-id="path-6-0-2-2-1">Travel together</h3>
+          <p>Everyone sees the plan. Split expenses as you go.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3 data-od-id="path-6-0-2-3-1">Stay private</h3>
+          <p>Sensitive items stay in your vault. Share only what you want.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<script>
-// Nav scroll effect
-window.addEventListener('scroll', ()=>{
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
-});
-</script>
-</body>
-</html>
+  <section class="waitlist" id="waitlist" data-od-id="path-7">
+    <div class="container" data-od-id="path-7-0">
+      <div class="waitlist-card">
+        <h2 data-od-id="path-7-0-0-0">Be the first to try Traippy</h2>
+        <p>We're building the travel organizer that friends actually use. Drop your email and we'll let you know when it's ready.</p>
+        <form class="waitlist-form" id="waitlist-form" novalidate="" data-od-id="path-7-0-0-2">
+          <input type="email" id="email-input" placeholder="you@email.com" autocomplete="email" required="" aria-label="Email address" data-od-id="path-7-0-0-2-0">
+          <button type="submit" class="btn btn-primary" data-od-id="path-7-0-0-2-1">Get early access</button>
+        </form>
+        <p class="form-msg" id="form-msg" role="status" data-od-id="path-7-0-0-3"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" data-od-id="path-8">
+    <div class="container" data-od-id="path-8-0">© 2025 Traippy · Travel organized, together.</div>
+  </footer>
+
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll('.wallet-tab');
+      var panels = document.querySelectorAll('.wallet-panel');
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var target = tab.getAttribute('data-tab');
+          tabs.forEach(function (t) {
+            t.classList.toggle('active', t === tab);
+            t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+          });
+          panels.forEach(function (p) {
+            p.classList.toggle('active', p.getAttribute('data-panel') === target);
+          });
+        });
+      });
+
+      var toggle = document.getElementById('menu-toggle');
+      var drawer = document.getElementById('mobile-drawer');
+      toggle.addEventListener('click', function () {
+        var open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
+        drawer.classList.toggle('open', !open);
+        drawer.setAttribute('aria-hidden', open ? 'true' : 'false');
+      });
+      drawer.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          toggle.setAttribute('aria-expanded', 'false');
+          drawer.classList.remove('open');
+          drawer.setAttribute('aria-hidden', 'true');
+        });
+      });
+
+      var form = document.getElementById('waitlist-form');
+      var input = document.getElementById('email-input');
+      var msg = document.getElementById('form-msg');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = input.value.trim();
+        msg.className = 'form-msg';
+        input.classList.remove('invalid');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          input.classList.add('invalid');
+          msg.textContent = 'Please enter a valid email address.';
+          msg.classList.add('error');
+          input.focus();
+          return;
+        }
+        msg.textContent = "You're on the list! We'll reach out when Traippy launches.";
+        msg.classList.add('success');
+        form.querySelector('button').disabled = true;
+        input.disabled = true;
+      });
+    })();
+  </script>
+
+
+<script data-od-snapshot-bridge="">(function(){
+  var SNAPSHOT_STYLE_PROPS = [
+    'display','position','box-sizing','width','height','min-width','max-width','min-height','max-height',
+    'margin','margin-top','margin-right','margin-bottom','margin-left',
+    'padding','padding-top','padding-right','padding-bottom','padding-left',
+    'border','border-top','border-right','border-bottom','border-left','border-radius',
+    'font','font-family','font-size','font-weight','font-style','line-height','letter-spacing',
+    'color','background-color','opacity','transform','transform-origin','overflow','overflow-x','overflow-y',
+    'white-space','text-align','vertical-align','object-fit','object-position',
+    'flex','flex-direction','flex-wrap','flex-grow','flex-shrink','flex-basis',
+    'grid','grid-template-columns','grid-template-rows','grid-column','grid-row',
+    'gap','row-gap','column-gap','align-items','align-content','align-self',
+    'justify-items','justify-content','justify-self','inset','top','right','bottom','left',
+    'z-index','box-shadow','text-shadow'
+  ];
+  function copyComputedStyle(source, target){
+    if (!source || !target || source.nodeType !== 1 || target.nodeType !== 1) return;
+    var computed = window.getComputedStyle(source);
+    var style = target.getAttribute('style') || '';
+    for (var i = 0; i < SNAPSHOT_STYLE_PROPS.length; i++){
+      var prop = SNAPSHOT_STYLE_PROPS[i];
+      var value = computed.getPropertyValue(prop);
+      if (value) style += prop + ':' + value + ';';
+    }
+    target.setAttribute('style', style);
+  }
+  function syncElementState(source, target){
+    var tag = source.tagName ? source.tagName.toLowerCase() : '';
+    if (tag === 'img' && source.currentSrc) target.setAttribute('src', source.currentSrc);
+    if (tag === 'input' || tag === 'textarea') target.setAttribute('value', source.value || '');
+    if (tag === 'canvas') {
+      try {
+        var img = document.createElement('img');
+        img.setAttribute('src', source.toDataURL('image/png'));
+        img.setAttribute('style', target.getAttribute('style') || '');
+        target.parentNode && target.parentNode.replaceChild(img, target);
+      } catch (_) {}
+    }
+  }
+  function inlineSnapshotStyles(originalRoot, cloneRoot){
+    copyComputedStyle(originalRoot, cloneRoot);
+    syncElementState(originalRoot, cloneRoot);
+    var originals = originalRoot.querySelectorAll('*');
+    var clones = cloneRoot.querySelectorAll('*');
+    var count = Math.min(originals.length, clones.length, 3500);
+    for (var i = 0; i < count; i++){
+      copyComputedStyle(originals[i], clones[i]);
+      syncElementState(originals[i], clones[i]);
+    }
+    var scripts = cloneRoot.querySelectorAll('script');
+    for (var s = scripts.length - 1; s >= 0; s--) scripts[s].remove();
+    var links = cloneRoot.querySelectorAll('link[rel~="stylesheet"], link[rel~="preload"], link[rel~="preconnect"]');
+    for (var l = links.length - 1; l >= 0; l--) links[l].remove();
+    var styles = cloneRoot.querySelectorAll('style');
+    for (var st = 0; st < styles.length; st++) {
+      styles[st].textContent = (styles[st].textContent || '')
+        .replace(/@import[^;]+;/gi, '')
+        .replace(/@font-face\s*\{[^}]*\}/gi, '');
+    }
+  }
+  function waitForImages(){
+    var imgs = Array.prototype.slice.call(document.images || []);
+    return Promise.all(imgs.map(function(img){
+      if (img.complete) return Promise.resolve();
+      return new Promise(function(resolve){
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    }));
+  }
+  function scrollOffset(){
+    var doc = document.documentElement;
+    var body = document.body;
+    return {
+      x: Math.max(window.scrollX || 0, doc ? doc.scrollLeft || 0 : 0, body ? body.scrollLeft || 0 : 0),
+      y: Math.max(window.scrollY || 0, doc ? doc.scrollTop || 0 : 0, body ? body.scrollTop || 0 : 0)
+    };
+  }
+  function escapeAttribute(value){
+    return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+  function renderSnapshot(id){
+    var w = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+    var h = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1);
+    var dpr = window.devicePixelRatio || 1;
+    var docW = Math.max(w, document.documentElement.scrollWidth || 0, document.body ? document.body.scrollWidth : 0);
+    var docH = Math.max(h, document.documentElement.scrollHeight || 0, document.body ? document.body.scrollHeight : 0);
+    var clone = document.documentElement.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+    inlineSnapshotStyles(document.documentElement, clone);
+    var scroll = scrollOffset();
+    var cloneBody = clone.querySelector('body');
+    var rootStyle = clone.getAttribute('style') || '';
+    var bodyStyle = cloneBody ? cloneBody.getAttribute('style') || '' : '';
+    var bodyContent = cloneBody ? cloneBody.innerHTML : clone.innerHTML;
+    var wrapperStyle = rootStyle + bodyStyle +
+      'margin:0;position:relative;left:' + (-scroll.x) + 'px;top:' + (-scroll.y) + 'px;' +
+      'width:' + docW + 'px;height:' + docH + 'px;overflow:visible;';
+    var html = '<div xmlns="http://www.w3.org/1999/xhtml" style="' + escapeAttribute(wrapperStyle) + '">' + bodyContent + '</div>';
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+      '<foreignObject x="0" y="0" width="' + docW + '" height="' + docH + '">' +
+      html +
+      '</foreignObject></svg>';
+    var img = new Image();
+    img.onload = function(){
+      try {
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.floor(w * dpr));
+        canvas.height = Math.max(1, Math.floor(h * dpr));
+        var ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('no 2d context');
+        ctx.scale(dpr, dpr);
+        ctx.drawImage(img, 0, 0, w, h);
+        window.parent.postMessage({ type: 'od:snapshot:result', id: id, dataUrl: canvas.toDataURL('image/png'), w: canvas.width, h: canvas.height }, '*');
+      } catch (err) {
+        window.parent.postMessage({ type: 'od:snapshot:result', id: id, error: String(err && err.message || err) }, '*');
+      }
+    };
+    function encodedSvgDataUrl(){
+      var encoded = encodeURIComponent(svg);
+      return 'data:image/svg+xml;charset=utf-8,' + encoded;
+    }
+    img.onerror = function(){
+      window.parent.postMessage({ type: 'od:snapshot:result', id: id, error: 'snapshot image failed' }, '*');
+    };
+    img.src = encodedSvgDataUrl();
+  }
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (!data || data.type !== 'od:snapshot' || !data.id) return;
+    waitForImages().then(function(){ renderSnapshot(String(data.id)); });
+  });
+})();</script><script data-od-srcdoc-transport-activation="">(function(){
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (!data || data.type !== 'od:srcdoc-transport-activate' || typeof data.html !== 'string') return;
+    document.open();
+    document.write(data.html);
+    document.close();
+  });
+})();</script></body></html>
