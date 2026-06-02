@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRAIPPY — Travel organized, together.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#FF6B35;--primary-dark:#E85A28;
+  --secondary:#FFB547;--secondary-light:#FFDC80;
+  --sunset-from:#FF4500;--sunset-to:#FF8C42;
+  --tropical-from:#0A6E52;--tropical-to:#1DB48A;
+  --horizon-from:#1A3FAD;--horizon-to:#3B8BDE;
+  --midnight-from:#0D0C24;--midnight-to:#1E1D3F;
+  --amber-from:#D97706;--amber-to:#F5B942;
+  --reef-from:#0D5D6E;--reef-to:#1A9BAE;
+  --dusk-from:#5B2D9E;--dusk-to:#8B5CF6;
+  --bg:#FFF8F0;--surface:#FFFFFF;--surface-alt:#FFF3E8;--surface-warm:#FFF0DC;
+  --dark:#0D0C24;
+  --text:#1E1E2D;--text-secondary:#5A5A72;--text-muted:#9292A5;
+  --grad-sunset:linear-gradient(135deg,var(--sunset-from),var(--sunset-to));
+  --grad-golden:linear-gradient(135deg,#FF6B35,#FFB547);
+  --grad-tropical:linear-gradient(135deg,var(--tropical-from),var(--tropical-to));
+  --grad-horizon:linear-gradient(135deg,var(--horizon-from),var(--horizon-to));
+  --grad-midnight:linear-gradient(135deg,var(--midnight-from),var(--midnight-to));
+  --grad-amber:linear-gradient(135deg,var(--amber-from),var(--amber-to));
+  --grad-reef:linear-gradient(135deg,var(--reef-from),var(--reef-to));
+  --grad-dusk:linear-gradient(135deg,var(--dusk-from),var(--dusk-to));
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+h1,h2,h3{line-height:1.2}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:background .3s}
+nav.scrolled{background:rgba(255,248,240,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(0,0,0,0.05)}
+nav .nav-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-family:'Caveat',cursive;font-size:28px;font-weight:700;background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+nav .cta-btn{background:var(--grad-sunset);color:#fff;border:none;padding:10px 24px;border-radius:50px;font-weight:600;font-size:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none;display:inline-block}
+nav .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,69,0,0.3)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:120px 0 80px}
+.hero::before{content:'';position:absolute;top:-40%;right:-20%;width:800px;height:800px;background:radial-gradient(circle,rgba(255,107,53,0.15),transparent 70%);border-radius:50%;pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(26,63,173,0.08),transparent 70%);border-radius:50%;pointer-events:none}
+.hero .hero-content{position:relative;z-index:1;max-width:650px}
+.hero .hero-badge{display:inline-block;background:var(--surface-warm);color:var(--primary);padding:6px 16px;border-radius:50px;font-size:13px;font-weight:600;margin-bottom:24px}
+.hero h1{font-size:clamp(3rem,8vw,5rem);font-weight:900;margin-bottom:8px;letter-spacing:-1px}
+.hero h1 .accent{font-family:'Caveat',cursive;font-size:1.15em;background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .hero-tagline{font-size:clamp(1.1rem,2.5vw,1.35rem);color:var(--text-secondary);margin-bottom:32px;max-width:480px}
+.hero .hero-cta{display:inline-flex;gap:12px}
+.hero .hero-cta .primary-btn{background:var(--grad-sunset);color:#fff;border:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:16px;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none}
+.hero .hero-cta .primary-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,69,0,0.35)}
+.hero .hero-cta .secondary-btn{background:var(--surface);color:var(--text);border:2px solid #E8E0D8;padding:14px 32px;border-radius:50px;font-weight:600;font-size:16px;cursor:pointer;transition:all .2s;text-decoration:none}
+.hero .hero-cta .secondary-btn:hover{border-color:var(--primary);color:var(--primary)}
+.hero .hero-visual{position:absolute;right:-60px;top:50%;transform:translateY(-50%);z-index:0;opacity:0.9}
+.hero .phone-mock{width:300px;height:600px;background:var(--surface);border-radius:40px;box-shadow:0 40px 80px rgba(0,0,0,0.12);overflow:hidden;border:3px solid #1E1E2D;position:relative}
+.phone-mock .phone-notch{width:120px;height:28px;background:#1E1E2D;border-radius:0 0 20px 20px;margin:0 auto}
+.phone-mock .phone-screen{padding:20px;height:calc(100% - 28px);display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.phone-mock .mock-trip-card{background:var(--grad-golden);border-radius:16px;padding:16px;color:#fff}
+.phone-mock .mock-trip-card .trip-name{font-weight:700;font-size:15px}
+.phone-mock .mock-trip-card .trip-dates{font-size:11px;opacity:0.85;margin-top:2px}
+.phone-mock .mock-section-row{display:flex;gap:8px}
+.phone-mock .mock-section{flex:1;border-radius:12px;padding:12px;color:#fff;font-size:11px;font-weight:600}
+.phone-mock .mock-section.itinerary{background:var(--grad-tropical)}
+.phone-mock .mock-section.bookings{background:var(--grad-horizon)}
+.phone-mock .mock-section.budget{background:var(--grad-midnight)}
+.phone-mock .mock-section.split{background:var(--grad-reef)}
+.phone-mock .mock-section.vault{background:var(--grad-dusk)}
+.phone-mock .mock-badge{font-size:10px;opacity:0.8;margin-top:4px}
+
+/* Problem */
+.problem{padding:100px 0;text-align:center}
+.problem h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:16px}
+.problem .problem-sub{color:var(--text-secondary);font-size:1.1rem;max-width:550px;margin:0 auto 48px}
+.problem .mess-grid{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.problem .mess-icon{background:var(--surface);border:1px solid #E8E0D8;border-radius:16px;padding:16px 24px;display:flex;align-items:center;gap:10px;font-weight:500;font-size:14px;color:var(--text-secondary);transition:transform .2s}
+.problem .mess-icon:hover{transform:translateY(-4px)}
+.problem .mess-icon .icon{font-size:24px}
+.problem .arrow-down{font-size:32px;margin:32px 0;color:var(--primary)}
+
+/* Features */
+.features{padding:80px 0}
+.features h2{text-align:center;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:12px}
+.features .features-sub{text-align:center;color:var(--text-secondary);font-size:1.1rem;margin-bottom:56px}
+.features .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.feature-card{background:var(--surface);border-radius:24px;padding:32px;border:1px solid #E8E0D8;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
+.feature-card:hover{transform:translateY(-6px);box-shadow:0 24px 48px rgba(0,0,0,0.08)}
+.feature-card .feat-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;color:#fff}
+.feature-card:nth-child(1) .feat-icon{background:var(--grad-tropical)}
+.feature-card:nth-child(2) .feat-icon{background:var(--grad-horizon)}
+.feature-card:nth-child(3) .feat-icon{background:var(--grad-amber)}
+.feature-card:nth-child(4) .feat-icon{background:var(--grad-reef)}
+.feature-card:nth-child(5) .feat-icon{background:var(--grad-dusk)}
+.feature-card:nth-child(6) .feat-icon{background:var(--grad-midnight)}
+.feature-card h3{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.feature-card p{color:var(--text-secondary);font-size:0.95rem;line-height:1.7}
+
+/* Offline highlight */
+.offline{padding:100px 0;background:var(--dark);color:#fff;text-align:center;position:relative;overflow:hidden}
+.offline::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-sunset)}
+.offline h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:16px}
+.offline p{color:#9292A5;font-size:1.1rem;max-width:500px;margin:0 auto 32px}
+.offline .offline-badge{display:inline-block;background:rgba(82,82,106,0.3);border:1px solid rgba(82,82,106,0.5);color:#B8B8C8;padding:8px 20px;border-radius:50px;font-weight:600;font-size:14px}
+.offline .offline-badge .dot{display:inline-block;width:8px;height:8px;background:#52526A;border-radius:50%;margin-right:8px}
+
+/* How it works */
+.how{padding:100px 0;text-align:center}
+.how h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:56px}
+.how .steps{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.how .step{flex:1;min-width:180px;max-width:240px;text-align:center}
+.how .step-num{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;margin:0 auto 16px}
+.how .step:nth-child(1) .step-num{background:var(--grad-tropical)}
+.how .step:nth-child(2) .step-num{background:var(--grad-horizon)}
+.how .step:nth-child(3) .step-num{background:var(--grad-reef)}
+.how .step:nth-child(4) .step-num{background:var(--grad-dusk)}
+.how .step h3{font-weight:700;margin-bottom:8px;font-size:1.05rem}
+.how .step p{color:var(--text-secondary);font-size:0.9rem;line-height:1.6}
+
+/* CTA */
+.cta-section{padding:100px 0;text-align:center}
+.cta-section .cta-card{background:var(--surface);border-radius:32px;padding:64px 32px;max-width:650px;margin:0 auto;border:1px solid #E8E0D8;position:relative;overflow:hidden}
+.cta-section .cta-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-sunset)}
+.cta-section h2{font-size:clamp(1.6rem,3vw,2rem);font-weight:800;margin-bottom:12px}
+.cta-section p{color:var(--text-secondary);font-size:1.05rem;margin-bottom:28px}
+.cta-section .email-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-section .email-form input{background:var(--bg);border:2px solid #E8E0D8;padding:14px 20px;border-radius:50px;font-size:15px;min-width:280px;outline:none;font-family:inherit;transition:border-color .2s}
+.cta-section .email-form input:focus{border-color:var(--primary)}
+.cta-section .email-form button{background:var(--grad-sunset);color:#fff;border:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.cta-section .email-form button:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,69,0,0.3)}
+
+/* Footer */
+footer{padding:40px 0;text-align:center;border-top:1px solid #E8E0D8}
+footer .footer-logo{font-family:'Caveat',cursive;font-size:24px;font-weight:700;background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+footer p{color:var(--text-muted);font-size:13px}
+
+@media(max-width:768px){
+  .hero{flex-direction:column;text-align:center;padding:100px 0 60px}
+  .hero .hero-content{max-width:100%}
+  .hero .hero-tagline{margin-left:auto;margin-right:auto}
+  .hero .hero-visual{display:none}
+  .hero .hero-cta{flex-direction:column;align-items:center}
+  .feature-grid{grid-template-columns:1fr}
+  .how .steps{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="logo">Traippy</div>
+    <a href="#cta" class="cta-btn">Get Early Access</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content container">
+    <span class="hero-badge">✨ Coming Soon</span>
+    <h1>Your trips,<br><span class="accent">organized</span> together.</h1>
+    <p class="hero-tagline">TRAIPPY replaces the scattered mess of WhatsApp threads, Google Docs, Splitwise, and screenshots with a single beautiful travel wallet — online or off.</p>
+    <div class="hero-cta">
+      <a href="#cta" class="primary-btn">Join the Waitlist</a>
+      <a href="#features" class="secondary-btn">See What It Does</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="phone-mock">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="mock-trip-card">
+          <div class="trip-name">Goa 2025 🏖️</div>
+          <div class="trip-dates">Dec 20 – 27 · 5 members</div>
+        </div>
+        <div class="mock-section-row">
+          <div class="mock-section itinerary">📍 Plan<div class="mock-badge">Day 3/7</div></div>
+          <div class="mock-section bookings">✈️ Bookings<div class="mock-badge">2 confirmed</div></div>
+        </div>
+        <div class="mock-section-row">
+          <div class="mock-section budget">💰 Budget<div class="mock-badge">₹42K / ₹60K</div></div>
+          <div class="mock-section split">📊 Split<div class="mock-badge">3 settled</div></div>
+        </div>
+        <div class="mock-section vault">🔒 My Vault</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="container">
+    <h2>Planning trips shouldn't feel like work.</h2>
+    <p class="problem-sub">But right now, your travel plans are scattered across a dozen apps and chat threads.</p>
+    <div class="mess-grid">
+      <div class="mess-icon"><span class="icon">💬</span> WhatsApp threads</div>
+      <div class="mess-icon"><span class="icon">📄</span> Google Docs</div>
+      <div class="mess-icon"><span class="icon">💰</span> Splitwise</div>
+      <div class="mess-icon"><span class="icon">📸</span> Screenshots</div>
+      <div class="mess-icon"><span class="icon">📝</span> Notes app</div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <h2 style="background:var(--grad-golden);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">TRAIPPY brings it all together.</h2>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="container">
+    <h2>Everything in one place.</h2>
+    <p class="features-sub">Every trip gets its own space. Every item has its place.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feat-icon">📍</div>
+        <h3>Day-by-Day Itinerary</h3>
+        <p>Build your plan with places, activities, and times. See your trip unfold day by day — clear, visual, and easy to adjust on the go.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">✈️</div>
+        <h3>Bookings at a Glance</h3>
+        <p>Flights, hotels, car rentals, experiences — all in one place with confirmation status. No more digging through email for booking references.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">💰</div>
+        <h3>Budget & Split</h3>
+        <p>Track spending against your budget. Split expenses with your group — equal, custom, or by percentage. Always know who owes what.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">📊</div>
+        <h3>Smart Splitting</h3>
+        <p>Expense ledger with settlement tracking. See at a glance who's settled up and who hasn't — no more awkward conversations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🔒</div>
+        <h3>Private Vault</h3>
+        <p>Store passport details, visa references, insurance info, and emergency contacts securely. Share with the group or keep private — the choice is yours.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">👥</div>
+        <h3>Built for Groups</h3>
+        <p>Invite friends to your trip. Everyone sees the plan, adds their bookings, splits expenses, and stays in sync — no group chat chaos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="offline">
+  <div class="container">
+    <h2>Works without internet.</h2>
+    <p>Access your itinerary, bookings, checklists, and budget even when you're off the grid. TRAIPPY is offline-first by design — not a premium feature.</p>
+    <span class="offline-badge"><span class="dot"></span> Offline-ready</span>
+  </div>
+</section>
+
+<section class="how">
+  <div class="container">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Create a Trip</h3>
+        <p>Name it, pick dates, add a cover photo. Invite your friends.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Add Your Plans</h3>
+        <p>Drop in bookings, build your itinerary, set a budget.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Travel Together</h3>
+        <p>Everyone sees the plan. Split expenses as you go.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Stay Private</h3>
+        <p>Sensitive items stay in your vault. Share only what you want.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="cta">
+  <div class="container">
+    <div class="cta-card">
+      <h2>Be the first to try TRAIPPY.</h2>
+      <p>We're building the travel organizer that friends actually use. Drop your email and we'll let you know when it's ready.</p>
+      <form class="email-form" onsubmit="event.preventDefault();alert('Thanks! We\\'ll be in touch.')">
+        <input type="email" placeholder="you@email.com" required>
+        <button type="submit">Get Early Access</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Traippy</div>
+  <p>Travel organized, together. © 2026</p>
+</footer>
+
+<script>
+// Nav scroll effect
+window.addEventListener('scroll', ()=>{
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+</script>
+</body>
+</html>
